@@ -1,34 +1,43 @@
-var page = 1;
-var isCalled = false;
-loadRoute();
-$(window).scroll(function () {
-  // End of the document reached?
-  var scrollHeight = $(document).height();
-  var scrollPos = Math.floor($(window).height() + $(window).scrollTop());
-  if ((scrollHeight - scrollPos) / scrollHeight == 0 && !isCalled) {
-    setTimeout(loadRoute(),5000);
+import {
+  update as updateSnake,
+  draw as drawSnake,
+  getCurrentSnakePosition,
+  isCollide,
+  SNAKE_SPEED,
+} from "./snake.js";
+import {
+  update as updateFood,
+  draw as drawFood,
+} from "./food.js";
+let gameBoard = document.getElementById("game-board");
+let lastRenderTime = 0;
+let gameOver = false;
+const main = (currentTime) => {
+  if(gameOver){
+    alert("You Lost Press Ok to Start!!!");
+    window.location = '/';
+    return;
   }
-});
+  window.requestAnimationFrame(main);
+  const secondSinceLast = (currentTime - lastRenderTime) / 1000;
+  if (secondSinceLast < 1 / SNAKE_SPEED) return;
+  lastRenderTime = currentTime;
+  updateSnake();
+  updateFood();
+  checkDeath();
+  gameBoard.innerHTML = '';
+  drawSnake(gameBoard);
+  drawFood(gameBoard);
+};
+window.requestAnimationFrame(main);
 
-function loadRoute() {
-  isCalled = true;
-  $(".loader").css("display", "block");
-  $.ajax({
-    type: "GET",
-    url: `https://api.javascripttutorial.net/v1/quotes/?page=${page}&limit=10`,
-    contentType: "application/json; charset=utf-8",
-    dataType: "json",
-    success: function (msg) {
-      if (msg.data) {
-        console.log(msg);
-        for (let i of msg.data) $(".container").append(`<h1>${i.quote}</h1>`);
-        page += 1;
-        $(".loader").css("display", "none");
-        isCalled = false;
-      }
-    },
-    error: function (req, status, error) {
-      alert("Error try again");
-    },
-  });
+function checkDeath(){
+    if(isOutsideGrid(getCurrentSnakePosition()) || isCollide())
+        gameOver = true;
 }
+
+function isOutsideGrid(position) {
+  return position.x < 1 || position.x > 21 || position.y < 1 || position.y > 21;
+}
+
+
