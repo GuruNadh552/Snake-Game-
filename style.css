@@ -40,7 +40,7 @@ body{
   position: absolute;
   background-color: black;
   margin-left: 9px;
-  margin-top: 8px;
+  margin-top: 14px;
   border-radius: 50%;
   border: 1px solid #fff;
 }
@@ -50,6 +50,7 @@ body{
   height: 8px;
   position: absolute;
   margin-left: 9px;
+  margin-top: 2px;
   border-radius: 50%;
   background-color: black;
   border: 1px solid #fff;
